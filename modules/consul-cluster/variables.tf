@@ -248,6 +248,12 @@ variable "enabled_metrics" {
   default     = []
 }
 
+variable "asg_name_prefix" {
+  description = "Name to prefix the ASG with, defaulting to an empty string. If no name or an empty name is supplied, the asg name with be prefixed with the required cluster_name variable"
+  type        = string
+  default     = ""
+}
+
 variable "enable_iam_setup" {
   description = "If true, create the IAM Role, IAM Instance Profile, and IAM Policies. If false, these will not be created, and you can pass in your own IAM Instance Profile via var.iam_instance_profile_name."
   type        = bool

@@ -12,7 +12,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_autoscaling_group" "autoscaling_group" {
-  name_prefix = var.cluster_name
+  name_prefix = coalesce(var.asg_name_prefix, var.cluster_name)
 
   launch_configuration = aws_launch_configuration.launch_configuration.name
 
