@@ -291,7 +291,30 @@ NOT actually deploy those new instances. To make that happen, you should do the 
 
 We will add a script in the future to automate this process (PRs are welcome!).
 
+In addition to scripting, the rolling out of updates can also be managed inside terraform by forcing the replacement of
+your ASG when the Launch Configuration changes. This can be done by using the 
+[random_pet](https://www.terraform.io/docs/providers/random/r/pet.html) resource to generate a random, human readable, 
+name when the launch configuration changes. For example
 
+```hcl-terraform
+resource "random_pet" "consul_asg_prefix" {
+
+  separator = "-"
+  length    = 2
+
+  keepers = {
+    # Generate a new pet name each time we switch launch configuration
+    consul_servers_lc_name = module.consul_servers.launch_config_name
+  }
+}
+
+module "consul_servers" {
+  source = "github.com/hashicorp/terraform-aws-consul.git//modules/consul-cluster?ref=v0.X.X"
+  asg_name_prefix = "consul-server-${element(concat(random_pet.consul_asg_prefix.*.id, [""]), 0)}"
+  # remainder of required module configurations omitted for brevity
+  # ...
+}
+```
 
 
 ## What happens if a node crashes?
